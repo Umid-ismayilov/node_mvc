@@ -1,6 +1,6 @@
 var app     = require('express')();
 var http    = require('http').createServer(app);
-require('./services/socket').io(http)
+require('./services/socket').connection(http)
 require('./services/app')();
 require('./services/routers')(app);
 

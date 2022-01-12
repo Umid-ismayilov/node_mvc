@@ -25,5 +25,21 @@
 
 <script src="https://cdn.socket.io/4.4.1/socket.io.min.js" integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H" crossorigin="anonymous"></script>
 <script>
-    var socket = io();
+    var socket = io('http://localhost:5000',{
+        auth: {
+            token: "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"
+        },
+        query: {}
+    });
+
+    var form = document.getElementById('form');
+    var input = document.getElementById('input');
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (input.value) {
+            socket.emit('chat message', input.value);
+            input.value = '';
+        }
+    });
 </script>
