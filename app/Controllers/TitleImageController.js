@@ -35,11 +35,7 @@ const userAgents = [
 ];
 const metaController = {
     async callback3(req, res) {
-        res.status(200).json({
-            status: 504,
-            message: 'Umid',
-            icon: '/new_front/assets/images/llogo.jpg'
-        });
+        res.status(200).json(req.body.url);
         if (validUrl.isUri(req.body.url)) {
             const url = req.body.url;
             const URI = new URL(req.body.url);
