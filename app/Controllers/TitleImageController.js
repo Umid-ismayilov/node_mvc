@@ -35,7 +35,6 @@ const userAgents = [
 ];
 const metaController = {
     async callback3(req, res) {
-        res.status(200).json(req);
         if (validUrl.isUri(req.body.url)) {
             const url = req.body.url;
             const URI = new URL(req.body.url);
