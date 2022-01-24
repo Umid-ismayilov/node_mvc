@@ -5,7 +5,9 @@ const connection = (http) => {
     const io = new Server(http);
     socketMiddleware(io);
     return io.on('connection', (socket) => {
+        socket.emit('SUBSCRIBED', {});
         console.log('user connection');
+
         // console.log(socket.handshake.auth);
         // console.log(socket.handshake.query);
         socket.on('chat message', (msg) => {

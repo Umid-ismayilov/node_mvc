@@ -34,10 +34,14 @@
 
     var form = document.getElementById('form');
     var input = document.getElementById('input');
+    socket.on('SUBSCRIBED', (data) => {
+        console.log('SUBSCRIBED');
+    })
 
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         if (input.value) {
+
             socket.emit('chat message', input.value);
             input.value = '';
         }
