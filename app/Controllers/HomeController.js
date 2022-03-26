@@ -19,56 +19,58 @@ const getUsers = (req, res, next) => {
 
 const importImport = (req, res, next)=>{
     const {method,body,file} =req;
-    if(method==='POST'){
-        const result = excelToJson({
-            sourceFile: file.path
-        });
-        var datas = result['TURKISH'];
-        var newData = [];
-        var kq      = datas[0];
-         datas.map((data,index)=>
-        {
-             if(data.A!=='KG'){
-                 var zona_id = data.A;
-                 delete data.A;
-                 var i = 1;
-                 from_weight = 0;
-                 for (const d in data) {
-                     if(d!=='A') {
-                         newData.push({
-                             country_id: 1,
-                             zona_id: zona_id,
-                             from_weight: from_weight,
-                             to_weight: kq[d],
-                             price: data[d],
-                             region_id:0,
-                             created_at:new Date(),
-                             type:1
-                         })
-                     }
-                     i++;
-                     from_weight=kq[d];
-                 }
-
-
-             }
-        })
-
-        db.getConnection((err, connection) => {
-            if (err) throw err;
-            console.log('connected as id ' + connection.threadId);
-            var values = newData.map(data=>Object.values(data))
-            var sql = "INSERT INTO country_tariffs (country_id, zona_id,from_weight,to_weight,price,region_id,created_at,type) VALUES ?";
-            connection.query(sql,[values], (err, rows) => {
-                connection.release(); // return the connection to pool
-                if (err) throw err;
-                // res.json(rows);
+    if (method === 'POST') {
+        if (file) {
+            const result = excelToJson({
+                sourceFile: file.path
             });
-        });
-        res.json(newData);
-        // res.render('index', { name: result });
-    }else{
-        res.render('index', { name: 'John' });
+            var datas = result['TURKISH'];
+            var newData = [];
+            var kq = datas[0];
+            datas.map((data, index) => {
+                if (data.A !== 'KG') {
+                    var zona_id = data.A;
+                    delete data.A;
+                    var i = 1;
+                    from_weight = 0;
+                    for (const d in data) {
+                        if (d !== 'A') {
+                            newData.push({
+                                country_id: 1,
+                                zona_id: zona_id,
+                                from_weight: from_weight,
+                                to_weight: kq[d],
+                                price: data[d],
+                                region_id: 0,
+                                created_at: new Date(),
+                                type: 1
+                            })
+                        }
+                        i++;
+                        from_weight = kq[d];
+                    }
+
+
+                }
+            })
+
+            db.getConnection((err, connection) => {
+                if (err) throw err;
+                console.log('connected as id ' + connection.threadId);
+                var values = newData.map(data => Object.values(data))
+                var sql = "INSERT INTO country_tariffs (country_id, zona_id,from_weight,to_weight,price,region_id,created_at,type) VALUES ?";
+                connection.query(sql, [values], (err, rows) => {
+                    connection.release(); // return the connection to pool
+                    if (err) throw err;
+                    // res.json(rows);
+                });
+            });
+            res.json(newData);
+        } else {
+            res.render('index', {name: body});
+        }
+    } else {
+        res.render('index', {name: 'John'});
 
     }
 
