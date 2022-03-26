@@ -1,7 +1,7 @@
 const web = require('../router/web')
 const api = require('../router/api')
 const routers   = (app)=>{
-    const allowedOrigins = ["http://localhost:5000", "https://limak.az","http://limak.web"];
+    const allowedOrigins = ["http://localhost:5000"];
 
     app.use(function (req, res, next) {
         let origin = req.headers.origin;
