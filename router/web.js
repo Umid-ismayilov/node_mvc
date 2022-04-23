@@ -8,6 +8,9 @@ router.get("/",HomeController.index);
 router.get("/importImport",HomeController.importImport);
 router.post("/importImport",uploadService.upload.single('file'),HomeController.importImport);
 router.get("/users",HomeController.getUsers);
+router.get("/bot",HomeController.bot);
+router.get("/get-all",HomeController.getAll);
+router.get("/elastic-ping",HomeController.ping);
 router.post("/extract",metaController.callback3);
 
 module.exports = router;
