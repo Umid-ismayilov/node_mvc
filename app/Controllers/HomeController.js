@@ -19,6 +19,24 @@ const getUsers = (req, res, next) => {
     });
 }
 
+const importElastic =  async (req, res, next) => {
+    db.getConnection((err, connection) => {
+        if (err) throw err;
+        connection.query('SELECT * from bxb_cities', async (err, rows) => {
+            connection.release(); // return the connection to pool
+            if (err) throw err;
+            var datas =  rows.map(async (item)=>{
+                const result =  await  client.index({
+                    index: 'bxb_cities',
+                    document: item,
+                })
+              return result;
+            })
+            res.json(datas);
+        });
+    });
+}
+
 const importImport = (req, res, next)=>{
     const {method,body,file} =req;
     if (method === 'POST') {
@@ -115,14 +133,30 @@ const  ping = async (req,res,next)=>{
 const  getAll = async (req,res,next)=>{
     const result= await client.search({
 
-        index: 'bxb_countries',
-        size: 2, //limit
+        index: 'bxb_cities',
+        // size: 2, //limit
         query: {
             match_all: {}
         }
     })
 
     res.json(result.hits.hits);
+
+}
+
+/** elastic getAllCount  **/
+const  getAllCount = async (req,res,next)=>{
+    const result= await client.count({
+
+        index: 'bxb_cities',
+        body: {
+            query: {
+                match_all: {}
+            }
+        }
+    })
+
+    res.json(result);
 
 }
 
@@ -170,19 +204,20 @@ const  bulkInsert = async (req,res,next)=>{
 
 /** elastic search  **/
 const  search = async (req,res,next)=>{
+
     const result= await client.search({
-        index: 'bxb_countries',
+        index: 'bxb_cities',
         query: {
-            match: { name: 'Umid' }
+            match: { NameEng: req.query.name }
         }
     })
-    res.json(result);
+   return  res.json(result);
 }
 
 /** elastic truncate  **/
 const  truncate  = async (req,res,next)=>{
     const result = await client.deleteByQuery({
-        index: 'bxb_countries',
+        index: 'bxb_cities',
         query: {
             match_all: {}
         }
@@ -208,5 +243,9 @@ module.exports = {
     bot:bot,
     getAll:getAll,
     ping:ping,
+    importElastic:importElastic,
+    truncate:truncate,
+    getAllCount:getAllCount,
+    search:search
 }
 
