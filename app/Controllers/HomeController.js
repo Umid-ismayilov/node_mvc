@@ -1,5 +1,6 @@
 const excelToJson = require('convert-excel-to-json');
 const puppeteer = require('puppeteer');
+
 /** elastic connection  **/
 const client = require('../../connection')
 
@@ -25,14 +26,14 @@ const importElastic =  async (req, res, next) => {
         connection.query('SELECT * from bxb_cities', async (err, rows) => {
             connection.release(); // return the connection to pool
             if (err) throw err;
-            var datas =  rows.map(async (item)=>{
-                const result =  await  client.index({
-                    index: 'bxb_cities',
-                    document: item,
-                })
-              return result;
-            })
-            res.json(datas);
+            // var datas =  rows.map(async (item)=>{
+            //     const result =  await  client.index({
+            //         index: 'bxb_cities',
+            //         document: item,
+            //     })
+            //   return result;
+            // })
+            res.json(rows);
         });
     });
 }
@@ -132,12 +133,15 @@ const  ping = async (req,res,next)=>{
 /** elastic getAll  **/
 const  getAll = async (req,res,next)=>{
     const result= await client.search({
-
         index: 'bxb_cities',
         // size: 2, //limit
         query: {
             match_all: {}
-        }
+            // query_string:{query:'*',fields:['position']}
+        },
+        sort : [
+            {position : "asc"}
+        ]
     })
 
     res.json(result.hits.hits);
@@ -207,9 +211,26 @@ const  search = async (req,res,next)=>{
 
     const result= await client.search({
         index: 'bxb_cities',
+        // query: {
+        //     match_phrase_prefix: {
+        //         NameEng: req.query.name
+        //     }
+        // }
         query: {
-            match: { NameEng: req.query.name }
-        }
+            bool: {
+                should: [{
+                     match_phrase_prefix: {
+                            NameEng: req.query.name
+                        }
+                     },
+                     {
+                     match_phrase_prefix: {
+                            NameRu: req.query.name
+                         }
+                     }],
+                        minimum_should_match: 1
+                    }
+            }
     })
    return  res.json(result);
 }
