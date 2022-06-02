@@ -23,6 +23,4 @@ ElasticSearch CRUD
 
 # Use ExcelToJson
 
-# Use ExcelToJson
-
 # Puppeteer auto login to https://github.com bot
