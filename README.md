@@ -18,3 +18,11 @@ ElasticSearch CRUD
 # Use react-engine
 
 # Use MySQL connection
+
+# Use Multer file upload
+
+# Use ExcelToJson
+
+# Use ExcelToJson
+
+# Puppeteer auto login to https://github.com bot
